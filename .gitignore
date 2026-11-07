@@ -1,5 +1,3 @@
 __pycache__/
 *.pyc
 .venv/
-*.linkage.json
-!examples/*.linkage.json
