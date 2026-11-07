@@ -123,3 +123,55 @@ def seg_seg_dist(p1, q1, p2, q2):
 def point_line_dist(p, c, a):
     v = vec(p) - c
     return norm(v - (v @ a) * a)
+
+
+def skew(v):
+    x, y, z = v
+    return np.array([[0, -z, y], [z, 0, -x], [-y, x, 0]], dtype=float)
+
+
+def exp_rot(w):
+    """Rotation matrix for rotation vector w (axis * angle)."""
+    th = float(np.linalg.norm(w))
+    if th < 1e-12:
+        return np.eye(3) + skew(w)
+    return rot_matrix(w / th, th)
+
+
+def perp(a):
+    """Any unit vector perpendicular to a."""
+    a = unit(a)
+    h = UP if abs(float(a @ UP)) < 0.9 else np.array([1.0, 0.0, 0.0])
+    return unit(cross(a, h))
+
+
+def frame_from(x_dir, z_dir):
+    """3x3 with columns x, y, z where x = x_dir, z ~ z_dir (made perpendicular)."""
+    x = unit(x_dir)
+    z = vec(z_dir) - (vec(z_dir) @ x) * x
+    if np.linalg.norm(z) < 1e-9:
+        z = perp(x)
+    z = unit(z)
+    y = np.cross(z, x)
+    return np.column_stack([x, y, z])
+
+
+def orthonormalize(R):
+    u, _, vt = np.linalg.svd(R)
+    M = u @ vt
+    if np.linalg.det(M) < 0:
+        u[:, -1] *= -1
+        M = u @ vt
+    return M
+
+
+def mat4(R, t):
+    M = np.eye(4)
+    M[:3, :3] = R
+    M[:3, 3] = t
+    return M
+
+
+def cross(a, b):
+    """Fast 3-vector cross product (np.cross is slow for single vectors)."""
+    return np.array([a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]])

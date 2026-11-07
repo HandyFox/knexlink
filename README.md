@@ -1,73 +1,90 @@
-# Linkage Designer
+# KnexLink
 
-A K'nex-style 3D layout tool for control linkages: shafts, tubes with rods running
-through them, arms, handle levers, bellcranks, push rods and sliders. Grab a handle,
-pull it, and watch everything move. It shows inches of travel and stops at binding points.
+A K'nex design suite for real-life development. Build with standard K'nex Classic
+parts that snap together the way the real ones do, cut any rod to a custom length,
+drag the model to watch it move, and get a parts list, STL files and dimensioned
+drawings out the other end.
 
 ## Start it
 
-**Easiest:** double-click `run_windows.bat`. The first run installs what it needs into a
-`.venv` folder next to the app (a few minutes). After that it starts right up.
+**Windows:** double-click `run_windows.bat`. The first run sets up what it needs in a
+`.venv` folder (a few minutes); after that it starts right up.
 
-**Or by hand:**
+**By hand (any OS):**
 
 ```
 pip install -r requirements.txt
 python main.py
 ```
 
-Python 3.10 or newer. It opens with a demo: Case-style twin levers on a rod-inside-a-tube
-cross shaft. The left lever twists the inner rod, the right lever twists the outer tube,
-and the rod's far end turns a bellcrank that pushes a valve spool around a corner.
+Python 3.10 or newer. It opens with a demo: a crank-rocker linkage (with one
+custom-length rod), a 14T/34T gear pair and a hinged flap.
 
-## Using it
+## The kit
 
-| Do this | How |
+| Family | Parts |
 |---|---|
-| Move a handle | Hover a black grip (cursor becomes a hand) and drag |
-| Move any arm or slider | Drag its hole or block the same way |
-| Orbit / pan / zoom | Drag empty space / Shift+drag / mouse wheel |
-| Select a part | Click it, or pick it in the parts list |
-| Change sizes | Edit on the right. Type `38.5`, `3' 2.5"`, `3ft 2.5in` or `1.5ft` |
-| Views | Toolbar or keys 1 (3D), 2 (Front), 3 (Side), 4 (Top) |
-| Full stop-to-stop run | Select a handle, press **Sweep** (S). Paths draw in teal and a report appears |
-| Back to neutral | **Reset** (R) |
-| Left/right copy | **Mirror L/R** copies the selected shaft and its arms across the center line |
+| Rods | green 16 mm, white 32, blue 54, yellow 86, red 128, grey 190 - plus **custom length** |
+| Connectors | 1-way, 2-way straight, 2-way 45, 3-way (red), 4-way (green), 5-way (yellow), 8-way (white), 7-way 3D (blue), 4-way 3D (purple) |
+| Joints | hinge (45-315 deg), ball joint (40 deg cone) |
+| On a rod | spacers, gears 14T / 34T / crown 82T, wheels S / M / L (tire size editable), rod clip, clip with hole |
 
-Directions: **X** = left/right (right is +), **Y** = back/front (front is +), **Z** = up.
+Rod lengths are the published K'nex Classic sizes. The connector geometry is fitted so
+standard rods form the K'nex 45-degree triangles: every standard diagonal closes within
+0.6 mm, except yellow legs with a red diagonal, which is about 2.7 mm short - the same
+"red rod is a bit short" quirk the real set has. KnexLink reports that as a forced fit.
 
-**Rod inside a tube:** give the rod the same axis line as the tube and a smaller
-diameter. Each twists on its own; the yellow stripe on each shows its twist.
+## Building (Build mode, key B)
 
-**Arm angles:** 0 = straight up (straight forward on an upright shaft). Positive follows
-the right-hand rule around the shaft's start-to-end direction.
+1. Click a dot in the 3D view:
+   - **green** = open connector slot - then click a rod color
+   - **orange** = free rod end - then click a connector, hinge or ball joint
+   - **blue** = open hole - then click a rod to push an axle through it
+2. Click a **rod** (no dot) and then a spacer, gear, wheel, clip or connector to slide it onto that rod.
+   Set its position along the rod, its turn, and whether it is locked to the rod on the right.
+3. **T** turns the part you just placed to its next slot; **Y** rolls it 45 deg around the rod.
+4. Rod ends that land on a slot click in automatically, like closing a real K'nex triangle.
+5. Change any rod's length on the right. Whatever hangs off its far end slides along; if the
+   rod is in a closed loop, the mismatch shows up as a forced fit instead.
 
-**Push rods** auto-size to fit at the neutral position. Turn off "Auto length" to set
-your own length (like adjusting a turnbuckle).
+Lengths: type `5.04`, `5.04"`, `128mm` or `3' 2"`. A bare number uses the display unit
+(toolbar **Units** switches inches / mm).
 
-## What it checks
+## Moving it (Move mode, key M)
 
-Red = binding, orange = getting close. Motion stops at the first binding point and it is
-logged on the **Binding / problems** tab with the handle position where it happened.
+Grab any part that isn't on the ground and drag. Rigidly clicked parts move together;
+connectors spin on rods through their holes (unless locked), hinges and ball joints swing,
+and meshing gears turn each other at their tooth ratio. Parts marked **Ground** never move
+(the first part you place is ground by default).
 
-- **Lock-up / dead center** - the linkage can't go further without a rod changing length
-- **Poor push angle** - a rod pushing an arm mostly along the arm instead of across it
-- **Rod-end over-tilt** - a ball rod end tipped past its limit (20 deg default, per rod)
-- **Stops** - a shaft hitting its min/max angle, a slider at the end of its track
-- **Interference** - parts running into each other or into frame bars
+The **Motion** tab lists every joint and every tracked part (anything you drag gets tracked)
+with its range and total travel. Click a joint, then use the arrow buttons or **Sweep** (S)
+to run it end to end and get a report with travel paths drawn in teal.
 
-Turn off "Stop at hits" or "Stop at rod-end tilt" on the toolbar to drag past those and
-just see them highlighted.
+## Binding and fit checks
 
-## Travel tab
+Red = binding, orange = warning. Motion stops at the first binding point and logs where:
 
-For every shaft, arm and slider: where it is now, the lowest and highest positions seen,
-total travel in inches, and the ratio to the handle. Ratio = inches this part moves per
-inch of grip travel; the force multiplier is roughly 1 / ratio (ignoring friction).
+- **Lock-up** - dead center, or nothing can move without bending a part
+- **Joint limits** - hinge outside 45-315 deg, ball joint past its 40 deg cone
+- **Interference** - rods and connector claws running into each other (toggle "Stop at hits")
+- **Forced fits** - a rod pushed into a slot or hole it doesn't line up with
 
-## Files
+## Export (menu or toolbar)
 
-Designs save as `.linkage.json` (File > Save). No CAD export yet.
+- **Parts list (CSV)** - counts by color/type, custom rods by length with hole-to-hole size
+- **Model as STL** - the whole model, in its moved position if you're in Move mode
+- **Custom rods as STL** - one printable rod per custom length, with K'nex-style end grooves
+  (approximate - print one and test the fit first)
+- **Drawings (PDF)** - Letter sheets: front/top/side views with overall dimensions, parts
+  list, custom rod details
+- **Drawings (DXF)** - the same views and parts list in millimeters for CAD/CAM
+
+## Accuracy notes
+
+Rod lengths and rod diameter are published values. Connector reach was fitted from them.
+Connector thickness, wheel sizes and the rod end groove are close approximations; the
+shapes in the 3D view are recognizable stand-ins, not factory CAD.
 
 ## Tests
 
